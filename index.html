@@ -28,6 +28,10 @@
                     socket.emit('vote', e.target.value)
                 })
             });
+
+            socket.on('vote', function(vote) {
+                console.log(`user voted on ${vote}`)
+            })
         </script>
     </body>
 </html>

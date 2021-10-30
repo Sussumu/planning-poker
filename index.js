@@ -12,8 +12,11 @@ app.get('/', (req, res) => {
 io.on('connection', socket => {
     console.log('user connected')
 
+    // broadcasts vote to all users
     socket.on('vote', vote => {
         console.log(`user voted on ${vote}`)
+
+        socket.broadcast.emit('vote', `user voted on ${vote}`)
     })
 
     socket.on('disconnect', () => {
