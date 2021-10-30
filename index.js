@@ -10,17 +10,25 @@ app.get('/', (req, res) => {
 })
 
 io.on('connection', socket => {
-    console.log('user connected')
+    socket.join(socket.room)
+    console.log(`user [${socket.id}] connected`)
+
+    // setups new room
+    socket.on('create-room', roomId => {
+        console.log(`room [${roomId}] created`)
+
+        socket.join(roomId)
+    })
 
     // broadcasts vote to all users
     socket.on('vote', vote => {
-        console.log(`user voted on ${vote}`)
+        console.log(`user [${socket.id}] from room [${vote.room}] voted on [${vote.value}]`)
 
-        socket.broadcast.emit('vote', `user voted on ${vote}`)
+        socket.broadcast.to(vote.room).emit('vote', `user [${socket.id}] voted on [${vote.value}]`)
     })
 
     socket.on('disconnect', () => {
-        console.log('user disconnected')
+        console.log(`user [${socket.id}] disconnected`)
     })
 })
 

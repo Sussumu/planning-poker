@@ -5,32 +5,55 @@
         
     </head>
     <body>
-        <button id="btn1" value=1>1</button>
-        <button id="btn2" value=2>2</button>
-        <button id="btn3" value=3>3</button>
-        <button id="btn5" value=5>5</button>
-        <button id="btn8" value=8>8</button>
-        <button id="btn13" value=13>13</button>
-        <button id="btn21" value=21>21</button>
-        <button id="btnCoffee" value="coffee">coffee</button>
-        <button id="btnInfinite" value="infinite">∞</button>
+        <div>
+            <form id="room-config">
+                <input id="name" type="text">
+                <button id="new-room">Create room</button>
+            </form>
+        </div>
+        <div id="board">
+            <button id="btn1" value=1>1</button>
+            <button id="btn2" value=2>2</button>
+            <button id="btn3" value=3>3</button>
+            <button id="btn5" value=5>5</button>
+            <button id="btn8" value=8>8</button>
+            <button id="btn13" value=13>13</button>
+            <button id="btn21" value=21>21</button>
+            <button id="btnCoffee" value="coffee">coffee</button>
+            <button id="btnInfinite" value="infinite">∞</button>
+        </div>
+        <div id="log"></div>
 
         <script>
+            var roomId = 0
             var socket = io()
 
-            var buttonsIds = new Array('btn1', 'btn2', 'btn3', 'btn5', 'btn8', 'btn13', 'btn21', 'btnCoffee', 'btnInfinite')
+            var form = document.getElementById('room-config')
+            
+            form.addEventListener('submit', function (e) {
+                e.preventDefault()
 
-            buttonsIds.forEach(buttonId => {
-                var element = document.getElementById(buttonId)
+                var log = document.getElementById('log')
+                roomId =  document.getElementById('name').value
 
-                element.addEventListener('click', function(e) {
-                    e.preventDefault()
-                    socket.emit('vote', e.target.value)
+                socket.emit('create-room', roomId)
+                log.innerHTML += `<p>user [${socket.id}] created room [${roomId}]</p>`
+
+                socket.on('vote', function(message) {
+                    log.innerHTML += `<p>${message}</p>`
                 })
-            });
 
-            socket.on('vote', function(vote) {
-                console.log(`user voted on ${vote}`)
+                var buttonsIds = new Array('btn1', 'btn2', 'btn3', 'btn5', 'btn8', 'btn13', 'btn21', 'btnCoffee', 'btnInfinite')
+
+                buttonsIds.forEach(buttonId => {
+                    var element = document.getElementById(buttonId)
+
+                    element.addEventListener('click', function(e) {
+                        e.preventDefault()
+                        log.innerHTML += `<p>user voted on [${e.target.value}]</p>`
+                        socket.emit('vote', { room: roomId, value: e.target.value })
+                    })
+                });
             })
         </script>
     </body>
