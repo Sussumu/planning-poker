@@ -29,32 +29,32 @@
             var socket = io()
 
             var form = document.getElementById('room-config')
-            
+            var log = document.getElementById('log')
+
             form.addEventListener('submit', function (e) {
                 e.preventDefault()
 
-                var log = document.getElementById('log')
-                roomId =  document.getElementById('name').value
+                roomId = document.getElementById('name').value
 
                 socket.emit('create-room', roomId)
                 log.innerHTML += `<p>user [${socket.id}] created room [${roomId}]</p>`
-
-                socket.on('vote', function(message) {
-                    log.innerHTML += `<p>${message}</p>`
-                })
-
-                var buttonsIds = new Array('btn1', 'btn2', 'btn3', 'btn5', 'btn8', 'btn13', 'btn21', 'btnCoffee', 'btnInfinite')
-
-                buttonsIds.forEach(buttonId => {
-                    var element = document.getElementById(buttonId)
-
-                    element.addEventListener('click', function(e) {
-                        e.preventDefault()
-                        log.innerHTML += `<p>user voted on [${e.target.value}]</p>`
-                        socket.emit('vote', { room: roomId, value: e.target.value })
-                    })
-                });
             })
+
+            socket.on('vote', function(message) {
+                log.innerHTML += `<p>${message}</p>`
+            })
+
+            var buttonsIds = new Array('btn1', 'btn2', 'btn3', 'btn5', 'btn8', 'btn13', 'btn21', 'btnCoffee', 'btnInfinite')
+
+            buttonsIds.forEach(buttonId => {
+                var element = document.getElementById(buttonId)
+
+                element.addEventListener('click', function (e) {
+                    e.preventDefault()
+                    log.innerHTML += `<p>user voted on [${e.target.value}]</p>`
+                    socket.emit('vote', { room: roomId, value: e.target.value })
+                })
+            });
         </script>
     </body>
 </html>
