@@ -1,0 +1,33 @@
+<html>
+    <head>
+        <title>Planning Poker</title>
+        <script src="/socket.io/socket.io.js"></script>
+        
+    </head>
+    <body>
+        <button id="btn1" value=1>1</button>
+        <button id="btn2" value=2>2</button>
+        <button id="btn3" value=3>3</button>
+        <button id="btn5" value=5>5</button>
+        <button id="btn8" value=8>8</button>
+        <button id="btn13" value=13>13</button>
+        <button id="btn21" value=21>21</button>
+        <button id="btnCoffee" value="coffee">coffee</button>
+        <button id="btnInfinite" value="infinite">∞</button>
+
+        <script>
+            var socket = io()
+
+            var buttonsIds = new Array('btn1', 'btn2', 'btn3', 'btn5', 'btn8', 'btn13', 'btn21', 'btnCoffee', 'btnInfinite')
+
+            buttonsIds.forEach(buttonId => {
+                var element = document.getElementById(buttonId)
+
+                element.addEventListener('click', function(e) {
+                    e.preventDefault()
+                    socket.emit('vote', e.target.value)
+                })
+            });
+        </script>
+    </body>
+</html>
